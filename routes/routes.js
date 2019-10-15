@@ -12,15 +12,11 @@ router.get("/api/appointments", async (req, res) => {
 
 router.post("/api/appointments", async (req, res) => {
   const appointmentData = req.body;
-  console.log(
-    !appointmentData.userIds ||
-      !appointmentData.restaurantId ||
-      !appointmentData.date_time
-  );
   if (
     !appointmentData.userIds ||
     !appointmentData.restaurantId ||
-    !appointmentData.date_time
+    !appointmentData.date_time ||
+    !appointmentData.description
   ) {
     res.status(403).send("Wrong properties, check documentation");
   }
