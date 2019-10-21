@@ -1,26 +1,32 @@
 const express = require("express");
 const fs = require("fs");
+const R = require("ramda");
 
 const loadData = require("../services/loadData");
 
 const router = new express.Router();
 
 router.get("/api/appointments", async (req, res) => {
+  const whereDateAfter = req.query.where_date_after;
   const appointmentData = loadData("appointmentData.json");
-  res.send(appointmentData);
+  if (!whereDateAfter) {
+    res.send(appointmentData);
+  } else {
+    const whereDateAfterFilteredAppointmentData = R.filter(
+      n => n.date_time > whereDateAfter,
+      appointmentData
+    );
+    res.send(whereDateAfterFilteredAppointmentData);
+  }
 });
 
 router.post("/api/appointments", async (req, res) => {
   const appointmentData = req.body;
-  console.log(
-    !appointmentData.userIds ||
-      !appointmentData.restaurantId ||
-      !appointmentData.date_time
-  );
   if (
-    !appointmentData.userIds ||
+    !appointmentData.invitations ||
     !appointmentData.restaurantId ||
-    !appointmentData.date_time
+    !appointmentData.date_time ||
+    !appointmentData.description
   ) {
     res.status(403).send("Wrong properties, check documentation");
   }
