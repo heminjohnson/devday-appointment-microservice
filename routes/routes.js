@@ -25,7 +25,7 @@ router.post("/api/appointments", async (req, res) => {
   if (
     !appointmentData.invitations ||
     !appointmentData.restaurantId ||
-    !appointmentData.date_time ||
+    !appointmentData.timestamp ||
     !appointmentData.description
   ) {
     res.status(403).send("Wrong properties, check documentation");
