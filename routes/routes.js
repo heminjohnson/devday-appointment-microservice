@@ -42,6 +42,26 @@ router.post("/api/appointments", async (req, res) => {
   res.send(appointmentData);
 });
 
+router.put("/api/appointments/:appointmentId/:userId", async (req, res) => {
+  const status = req.query.status;
+  const params = req.params;
+  if (!status || !params.appointmentId || !params.userId) {
+    res.status(403).send("Wrong properties, check documentation");
+  }
+
+  const appointments = loadData("appointmentData.json");
+  const appointmentIndex = R.findIndex(
+    R.propEq("id", Number(params.appointmentId))
+  )(appointments);
+  const invitationsIndex = R.findIndex(R.propEq("userId", params.userId))(
+    appointments[appointmentIndex].invitations
+  );
+  appointments[appointmentIndex].invitations[invitationsIndex].status = status;
+
+  fs.writeFileSync("appointmentData.json", JSON.stringify(appointments));
+  res.send(appointments[appointmentIndex]);
+});
+
 router.delete("/api/appointments", async (req, res) => {
   const { password } = req.body;
   if (!password) {
